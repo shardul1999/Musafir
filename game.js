@@ -16,8 +16,7 @@ onload = function () {
     const solve = document.getElementById('solve');
     const temptext = document.getElementById('temptext');
     const temptext2 = document.getElementById('temptext2');
-    const cities = ['Delhi', 'Mumbai', 'Gujarat', 'Goa', 'Kanpur', 'Jammu', 'Hyderabad', 'Bangalore', 'Gangtok', 'Meghalaya'];
-
+    
     // create a network
     // const container = document.getElementById('container');
     // const genNew = document.getElementById('generate-graph');
@@ -59,16 +58,26 @@ onload = function () {
 
     function createData(){
         V = Math.floor(Math.random() * 8) + 3; // Ensures V is between 3 and 10
+        // FOR RANDOM NO. OF NODES IN THE GRAPH.
+        
+        const cities = ['Delhi', 'Mumbai', 'Gujarat', 'Goa', 'Kanpur', 'Jammu', 'Hyderabad', 'Bangalore', 'Gangtok', 'Meghalaya'];
+        // CONSTANT LIST OF CITIES.
+
+        // LIST FOR NODES
         let nodes = [];
+        // PUSHING ALL THE RANDOMLY GENERATED CITIES IN THE NODES LIST
         for(let i=1;i<=V;i++){
             nodes.push({id:i, label: cities[i-1]})
         }
+
         // Prepares vis.js style nodes for our data
         nodes = new vis.DataSet(nodes);
 
-        // Creating a tree like underlying graph structure
+        // Creating a tree like underlying graph structure.
+        // Here we are creating edges for only for bus routes.
         let edges = [];
         for(let i=2;i<=V;i++){
+            //  TO HAVE A DIVERSE GRAPH 
             let neigh = i - Math.floor(Math.random()*Math.min(i-1,3)+1); // Picks a neighbour from i-3 to i-1
             edges.push({type: 0, from: i, to: neigh, color: 'orange',label: String(Math.floor(Math.random()*70)+31)});
         }
@@ -76,12 +85,16 @@ onload = function () {
         // Randomly adding new edges to graph
         // Type of bus is 0
         // Type of plane is 1
+
+        // It may look complex but all this block is doing is adding edges dynamically.
         for(let i=1;i<=V/2;){
 
-            let n1 = Math.floor(Math.random()*V)+1;
-            let n2 = Math.floor(Math.random()*V)+1;
+            let n1 = Math.floor(Math.random()*V)+1;   // node 1
+            let n2 = Math.floor(Math.random()*V)+1;   // node 2
+
+            // making sure randomly generated nodes aren't same.
             if(n1!==n2){
-                if(n1<n2){
+                if(n1<n2){    
                     let tmp = n1;
                     n1 = n2;
                     n2 = tmp;
@@ -127,8 +140,10 @@ onload = function () {
         }
 
         // Setting the new values of global variables
-        src = 1;
-        dst = V;
+        src = 1; // WE HAVE ALWAYS KEPT SOURCE AS 1 WHICH IS DELHI. Hence, in the network we can notice our source is delhi everytime.
+                 // we can keep it variable as well.
+        dst = V; // RANDOM CITY CHOSEN AS DESTINATION.
+
         //Preparing data object for Vis.js
         curr_data = {
             nodes: nodes,
@@ -187,7 +202,7 @@ solve.onclick = function () {
     network2.setData(solveData());
 };
 
-
+// dijkstra's algorithm
 function dijkstra(graph, V, src)
 {
     // keeping record of visited nodes
@@ -263,27 +278,27 @@ function createGraph(data){
 // FOR PLANE'S EDGES
 function shouldTakePlane(edges, dist1, dist2, mn_dist) {
     let plane = 0;
-        let p1=-1, p2=-1;
-        for(let pos in edges){
-            let edge = edges[pos];
-            if(edge['type']===1){
-                let to = edge['to']-1;
-                let from = edge['from']-1;
-                let wght = parseInt(edge['label']);
-                if(dist1[to][0]+wght+dist2[from][0] < mn_dist){
-                    plane = wght;
-                    p1 = to;
-                    p2 = from;
-                    mn_dist = dist1[to][0]+wght+dist2[from][0];
-                }
-                if(dist2[to][0]+wght+dist1[from][0] < mn_dist){
-                    plane = wght;
-                    p2 = to;
-                    p1 = from;
-                    mn_dist = dist2[to][0]+wght+dist1[from][0];
-                }
+    let p1=-1, p2=-1;
+    for(let pos in edges){
+        let edge = edges[pos];
+        if(edge['type']===1){
+            let to = edge['to']-1;
+            let from = edge['from']-1;
+            let wght = parseInt(edge['label']);
+            if(dist1[to][0]+wght+dist2[from][0] < mn_dist){
+                plane = wght;
+                p1 = to;
+                p2 = from;
+                mn_dist = dist1[to][0]+wght+dist2[from][0];
+            }
+            if(dist2[to][0]+wght+dist1[from][0] < mn_dist){
+                plane = wght;
+                p2 = to;
+                p1 = from;
+                mn_dist = dist2[to][0]+wght+dist1[from][0];
             }
         }
+    }
 return {plane, p1, p2};
 }
 
