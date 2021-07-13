@@ -10,18 +10,19 @@ onload = function () {
 
     let curr_data,V,src,dst;
 
+    // containing entire system
     const container = document.getElementById('mynetwork');
+    // for query
     const container2 = document.getElementById('mynetwork2');
+    // generating a new graph
     const genNew = document.getElementById('generate-graph');
+    // for solving the query
     const solve = document.getElementById('solve');
     const temptext = document.getElementById('temptext');
     const temptext2 = document.getElementById('temptext2');
-    
-    // create a network
-    // const container = document.getElementById('container');
-    // const genNew = document.getElementById('generate-graph');
 
     // initialise graph options(attributes of the graph)
+    // Options contain information about the nodes and edges
     const options = {
         edges: {
             labelHighlightBold: true,
@@ -44,11 +45,9 @@ onload = function () {
         }
     };
 
-    // initialize your network!
-    // const network = new vis.Network(container);
-    // network.setOptions(options);
-
-    // Creating the graph for the question
+    // initialize your network
+    // Creating the graph(Question)
+    // setOptions: putting ui info related to nodes and edges.
     const network = new vis.Network(container);
     network.setOptions(options);
 
@@ -150,42 +149,14 @@ onload = function () {
             edges: edges
         };
         //return data;
+        return curr_data;
     }
-
-// For understanding
-/*
-function createData(){
-        const cities = ['Delhi', 'Mumbai', 'Gujarat', 'Goa', 'Kanpur', 'Jammu', 'Hyderabad', 'Bangalore', 'Gangtok', 'Meghalaya'];
-
-        // Initialising number of nodes in graoh dynamically
-        const V = Math.floor(Math.random() * cities.length) + 3;
-
-        // Preparing node data for Vis.js
-        let vertices = [];
-        for(let i=0;i<V;i++){
-            vertices.push({id:i, label: cities[i-1]});
-        }
-
-        // Preparing edges for Vis.js
-        let edges = [];
-        for(let i=1;i<V;i++){
-            // Picking a neighbour from 0 to i-1 to make edge to
-            let neigh = Math.floor(Math.random()*i);
-
-            // Adding the edge between node and neighbour
-            edges.push({from: i, to: neigh, color: 'orange',label: String(Math.floor(Math.random()*70)+30)});
-        }
-
-genNew.onclick = function () {
-    // Creating and setting data to network
-    let data = createData();
-    network.setData(data);
-};
-*/
 
 genNew.onclick = function () {
     // Create new data and display the data
-    createData();
+    let curr_data;
+    const cities = ['Delhi', 'Mumbai', 'Gujarat', 'Goa', 'Kanpur', 'Jammu', 'Hyderabad', 'Bangalore', 'Gangtok', 'Meghalaya'];
+    curr_data=createData();
     network.setData(curr_data);
     temptext2.innerText = 'Find least time path from '+cities[src-1]+' to '+cities[dst-1];
     temptext.style.display = "inline";
@@ -293,8 +264,8 @@ function shouldTakePlane(edges, dist1, dist2, mn_dist) {
             }
             if(dist2[to][0]+wght+dist1[from][0] < mn_dist){
                 plane = wght;
-                p2 = to;
                 p1 = from;
+                p2 = to;
                 mn_dist = dist2[to][0]+wght+dist1[from][0];
             }
         }
@@ -349,8 +320,4 @@ function pushEdges(dist, curr, reverse) {
 }
 
 genNew.click();
-};
-
-
-
-
+}; 
